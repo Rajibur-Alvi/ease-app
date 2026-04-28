@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'design_tokens.dart';
 
 class EaseTheme {
   // Brand Colors
@@ -23,7 +24,6 @@ class EaseTheme {
         primaryContainer: primaryContainer,
         secondary: secondary,
         tertiary: tertiaryTerracotta,
-        background: background,
         surface: surface,
         onSurface: onSurface,
         onSurfaceVariant: onSurfaceVariant,
@@ -56,18 +56,52 @@ class EaseTheme {
           color: onSurfaceVariant,
         ),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white.withValues(alpha: 0.75),
+        border: OutlineInputBorder(
+          borderRadius: EaseRadius.md,
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: EaseRadius.md,
+          borderSide: BorderSide(color: surfaceDim),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: EaseRadius.md,
+          borderSide: const BorderSide(color: primarySage, width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: EaseSpace.md,
+          vertical: EaseSpace.sm,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(56),
+          shape: RoundedRectangleBorder(borderRadius: EaseRadius.md),
+          textStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        shape: RoundedRectangleBorder(borderRadius: EaseRadius.lg),
+        elevation: 1.5,
+      ),
     );
   }
 
   // Neumorphic Shadow (Soft double shadow)
   static List<BoxShadow> get neumorphicShadows => [
         BoxShadow(
-          color: primaryContainer.withOpacity(0.1),
+          color: primaryContainer.withValues(alpha: 0.1),
           offset: const Offset(10, 10),
           blurRadius: 20,
         ),
         BoxShadow(
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           offset: const Offset(-10, -10),
           blurRadius: 20,
         ),
@@ -75,9 +109,9 @@ class EaseTheme {
 
   // Glassmorphism Decoration
   static BoxDecoration get glassDecoration => BoxDecoration(
-        color: Colors.white.withOpacity(0.4),
+        color: Colors.white.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
         boxShadow: neumorphicShadows,
       );
 }

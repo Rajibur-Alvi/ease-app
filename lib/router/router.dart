@@ -1,89 +1,89 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../screens/splash_screen.dart';
-import '../screens/onboarding_screen.dart';
-import '../screens/dashboard_screen.dart';
-import '../screens/category_detail_screen.dart';
-import '../screens/brain_dump_screen.dart';
-import '../screens/voice_mode_screen.dart';
-import '../screens/ease_score_screen.dart';
-import '../screens/weekly_offload_screen.dart';
-import '../screens/relief_report_screen.dart';
-import '../screens/categories_screen.dart';
-import '../screens/profile_screen.dart';
-import '../screens/investment_screen.dart';
-import '../screens/connections_screen.dart';
-import '../screens/chat_screen.dart';
-import '../models/models.dart';
+import '../services/app_state_provider.dart';
+import '../ui/screens/onboarding_mvp_screen.dart';
+import '../ui/screens/home_focus_screen.dart';
+import '../ui/screens/life_departments_screen.dart';
+import '../ui/screens/connect_mvp_screen.dart';
+import '../ui/screens/profile_mvp_screen.dart';
+import '../ui/screens/brain_dump_input_screen.dart';
+import '../ui/screens/reflection_result_screen.dart';
+import '../ui/screens/investment_guided_screen.dart';
+import '../ui/widgets/mvp_shell.dart';
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding',
-      builder: (context, state) => const OnboardingScreen(),
-    ),
-    GoRoute(
-      path: '/dashboard',
-      builder: (context, state) => const DashboardScreen(),
-    ),
-    GoRoute(
-      path: '/categories',
-      builder: (context, state) => const CategoriesScreen(),
-    ),
-    GoRoute(
-      path: '/profile',
-      builder: (context, state) => const ProfileScreen(),
-    ),
-    GoRoute(
-      path: '/category-detail',
-      builder: (context, state) {
-        final categoryStr = state.uri.queryParameters['category'] ?? 'health';
-        final category = LifeCategory.values.firstWhere(
-          (e) => e.toString().split('.').last == categoryStr,
-          orElse: () => LifeCategory.health,
-        );
-        return CategoryDetailScreen(category: category);
-      },
-    ),
-    GoRoute(
-      path: '/brain-dump',
-      builder: (context, state) => const BrainDumpScreen(),
-    ),
-    GoRoute(
-      path: '/voice-mode',
-      builder: (context, state) => const VoiceModeScreen(),
-    ),
-    GoRoute(
-      path: '/ease-score',
-      builder: (context, state) => const EaseScoreScreen(),
-    ),
-    GoRoute(
-      path: '/weekly-offload',
-      builder: (context, state) => const WeeklyOffloadScreen(),
-    ),
-    GoRoute(
-      path: '/relief-report',
-      builder: (context, state) => const ReliefReportScreen(),
-    ),
-    GoRoute(
-      path: '/investments',
-      builder: (context, state) => const InvestmentScreen(),
-    ),
-    GoRoute(
-      path: '/connections',
-      builder: (context, state) => const ConnectionsScreen(),
-    ),
-    GoRoute(
-      path: '/chat',
-      builder: (context, state) {
-        final name = state.uri.queryParameters['name'] ?? 'Friend';
-        return ChatScreen(partnerName: name);
-      },
-    ),
-  ],
-);
+GoRouter createAppRouter(AppStateProvider controller) {
+  return GoRouter(
+    initialLocation: '/onboarding',
+    refreshListenable: controller,
+    redirect: (context, state) {
+      final location = state.uri.toString();
+      final onboardingDone = controller.state.onboardingComplete;
+
+      if (!onboardingDone && location != '/onboarding') {
+        return '/onboarding';
+      }
+      if (onboardingDone && location == '/onboarding') {
+        return '/home';
+      }
+      if (location == '/reflect' && controller.state.lastReflection == null) {
+        return '/brain-dump';
+      }
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingMvpScreen(),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MvpShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomeFocusScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/life',
+                builder: (context, state) => const LifeDepartmentsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/connect',
+                builder: (context, state) => const ConnectMvpScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileMvpScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/brain-dump',
+        builder: (context, state) => const BrainDumpInputScreen(),
+      ),
+      GoRoute(
+        path: '/reflect',
+        builder: (context, state) => const ReflectionResultScreen(),
+      ),
+      GoRoute(
+        path: '/investments',
+        builder: (context, state) => const InvestmentGuidedScreen(),
+      ),
+    ],
+  );
+}

@@ -146,23 +146,6 @@ class UserProfile {
     this.communicationStyle = CommunicationStyle.text,
   });
 
-  UserProfile copyWith({
-    String? name,
-    PersonalityType? personalityType,
-    List<String>? interests,
-    List<LifeCategory>? priorityDepartments,
-    int? introvertLevel,
-    CommunicationStyle? communicationStyle,
-  }) =>
-      UserProfile(
-        name: name ?? this.name,
-        personalityType: personalityType ?? this.personalityType,
-        interests: interests ?? this.interests,
-        priorityDepartments: priorityDepartments ?? this.priorityDepartments,
-        introvertLevel: introvertLevel ?? this.introvertLevel,
-        communicationStyle: communicationStyle ?? this.communicationStyle,
-      );
-
   Map<String, dynamic> toJson() => {
         'name': name,
         'personalityType': personalityType.index,

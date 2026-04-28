@@ -13,9 +13,8 @@ class StorageService {
         final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
         return AppState.fromJson(jsonMap);
       }
-    } catch (e) {
-      // Return default state on error
-      print("Error loading state: \$e");
+    } catch (_) {
+      // Return default state on parse/storage errors.
     }
     return AppState();
   }
@@ -25,8 +24,8 @@ class StorageService {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = jsonEncode(state.toJson());
       await prefs.setString(_appStateKey, jsonString);
-    } catch (e) {
-      print("Error saving state: \$e");
+    } catch (_) {
+      // Ignore write errors in scaffolded local persistence.
     }
   }
 }
